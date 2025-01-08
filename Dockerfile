@@ -2,3 +2,4 @@
 
 FROM golang as go
 
+WORKDIR /src
