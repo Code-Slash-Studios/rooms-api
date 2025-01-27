@@ -4,6 +4,6 @@ FROM golang as go
 
 WORKDIR /api
 
-COPY . /api/src
+COPY . /api
 
 EXPOSE 6000
