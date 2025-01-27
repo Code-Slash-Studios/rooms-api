@@ -2,4 +2,8 @@
 
 FROM golang as go
 
-WORKDIR /src
+WORKDIR /api
+
+COPY . /api/src
+
+EXPOSE 6000
