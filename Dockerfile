@@ -9,4 +9,6 @@ RUN go get -u github.com/gorilla/mux
 
 COPY . /api
 
+RUN go build .
+
 EXPOSE 6000
