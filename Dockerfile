@@ -6,8 +6,8 @@ WORKDIR /api
 
 COPY . .
 
-RUN go get -u http
-RUN go get -u github.com/gorilla/mux
+RUN go install http
+RUN go install github.com/gorilla/mux
 
 COPY . /api
 
