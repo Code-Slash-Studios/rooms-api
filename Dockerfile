@@ -8,7 +8,9 @@ COPY go.mod ./
 
 RUN go mod download
 
-COPY . .
+COPY /src/controllers /api/controllers
+COPY /src/models /api/models
+COPY /src/routes /api/routes
 
 # RUN go install http@latest
 # RUN go install github.com/gorilla/mux
