@@ -1,8 +1,14 @@
 # syntax=docker/dockerfile:1.4
 
-FROM golang:1.15
+FROM golang:1.23 AS go
 
 WORKDIR /api
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
 
 RUN go get -u http
 RUN go get -u github.com/gorilla/mux
