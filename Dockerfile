@@ -17,11 +17,11 @@ COPY /src/routes /api/routes
 
 # COPY . /api
 
-WORKDIR /api/controllers
-RUN go build -o .
-WORKDIR /api/models
-RUN go build -o .
-WORKDIR /api/routes
+# WORKDIR /api/controllers
+# RUN go build -o .
+# WORKDIR /api/models
+# RUN go build -o .
+# WORKDIR /api/routes
 RUN go build -o .
 
 EXPOSE 6000
