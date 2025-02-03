@@ -6,7 +6,7 @@ WORKDIR /api
 
 COPY . .
 
-RUN go install http
+RUN go install http@latest
 RUN go install github.com/gorilla/mux
 
 COPY . /api
