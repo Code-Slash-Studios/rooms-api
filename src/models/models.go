@@ -15,3 +15,5 @@ type Reservation struct {
 func (r Reservation) getID() string {
 	return r.ID
 }
+
+func main() {}
