@@ -15,7 +15,7 @@ COPY /src/routes /api/routes
 # RUN go install http@latest
 # RUN go install github.com/gorilla/mux
 
-# COPY . /api
+COPY . /api
 
 # WORKDIR /api/controllers
 # RUN go build -o .
