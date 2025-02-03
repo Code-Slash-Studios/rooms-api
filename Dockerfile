@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM golang:1.23 as go
+FROM golang:1.15 as go
 
 WORKDIR /api
 
