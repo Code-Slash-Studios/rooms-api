@@ -4,7 +4,7 @@ FROM golang:1.23.5 AS go
 
 WORKDIR /api
 
-COPY go.mod ./
+COPY go.mod go.sum ./
 
 RUN go mod download
 
