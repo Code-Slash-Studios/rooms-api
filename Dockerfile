@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM golang:1.23.5 AS go
+FROM golang:1.23 AS go
 
 WORKDIR /api
 
@@ -23,5 +23,7 @@ COPY . /api
 # RUN go build -o .
 # WORKDIR /api/routes
 RUN go build -o .
+
+COPY . /api
 
 EXPOSE 6000
