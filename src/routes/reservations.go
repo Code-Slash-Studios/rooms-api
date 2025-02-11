@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"../models/"
+	. "rooms-api/src/models"
+
 	"github.com/gorilla/mux"
 )
 
-var reservations = make(map[string]models.Reservation)
+var reservations = make(map[string]Reservation)
 
 func getReservations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var ReservationList []models.Reservation
+	var ReservationList []Reservation
 	for _, reservation := range reservations {
 		ReservationList = append(ReservationList, reservation)
 	}
@@ -30,7 +31,7 @@ func getReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func createReservation(w http.ResponseWriter, r *http.Request) {
-	var reservation models.Reservation
+	var reservation Reservation
 	json.NewDecoder(r.Body).Decode(&reservation)
 	reservations[reservation.ID] = reservation
 	w.WriteHeader(http.StatusCreated)
@@ -39,7 +40,7 @@ func createReservation(w http.ResponseWriter, r *http.Request) {
 
 func updateReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var updatedReservation models.Reservation
+	var updatedReservation Reservation
 	json.NewDecoder(r.Body).Decode(&updatedReservation)
 	if _, exists := reservations[params["id"]]; !exists {
 		http.Error(w, "User not found", http.StatusNotFound)

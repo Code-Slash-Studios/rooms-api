@@ -12,8 +12,6 @@ type Reservation struct {
 	End   time.Time
 }
 
-func (r Reservation) getID() string {
-	return r.ID
-}
-
-func main() {}
+//func (r Reservation) getID() string {
+//	return r.ID
+//}

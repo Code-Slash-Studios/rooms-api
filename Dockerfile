@@ -22,8 +22,11 @@ COPY . /api
 # WORKDIR /api/models
 # RUN go build -o .
 # WORKDIR /api/routes
-RUN go build -o .
 
 COPY . /api
 
+RUN go build -o /rooms-api
+
 EXPOSE 6000
+
+CMD ["/rooms-api"]
