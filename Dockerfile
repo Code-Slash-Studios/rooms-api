@@ -1,32 +1,32 @@
 # syntax=docker/dockerfile:1.4
 
-FROM golang:1.23 AS go
+# Golang image as builder
+FROM golang:1.23 AS builder
 
+# Set working directory
 WORKDIR /api
 
+# Copy Go module files and dependencies
 COPY go.mod go.sum ./
-
 RUN go mod download
 
-COPY /src/controllers /api/controllers
-COPY /src/models /api/models
-COPY /src/routes /api/routes
+# Copy source code
+COPY . .
 
-# RUN go install http@latest
-# RUN go install github.com/gorilla/mux
+# Build binary executable
+RUN go build -o rooms-api .
 
-COPY . /api
+# Use ubuntu image for container
+FROM ubuntu:latest
 
-# WORKDIR /api/controllers
-# RUN go build -o .
-# WORKDIR /api/models
-# RUN go build -o .
-# WORKDIR /api/routes
+# Set working directory
+WORKDIR /root/
 
-COPY . /api
+# Copy executable
+COPY --from=builder /api/rooms-api .
 
-RUN go build -o /rooms-api
-
+# Expose application port
 EXPOSE 6000
 
-CMD ["/rooms-api"]
+# Run application
+CMD ["./rooms-api"]
