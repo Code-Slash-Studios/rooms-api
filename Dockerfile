@@ -20,7 +20,7 @@ RUN go build -o rooms-api .
 FROM ubuntu:latest
 
 # Set working directory
-WORKDIR /root/
+WORKDIR /root
 
 # Copy executable
 COPY --from=builder /api/rooms-api .
