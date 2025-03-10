@@ -7,3 +7,9 @@ build:
 
 run:
 	./${NAME}
+
+podman:
+	podman stop ${NAME}-container
+	podman rm ${NAME}-container
+	podman build -t ${NAME}-image .
+	podman run -d -p 6000:6000 --name rooms-api-container rooms-api-image

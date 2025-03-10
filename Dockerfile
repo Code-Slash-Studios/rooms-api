@@ -27,6 +27,7 @@ COPY --from=builder /api/rooms-api .
 
 # Expose application port
 EXPOSE 6000
+EXPOSE 3306
 
 # Run application
 CMD ["./rooms-api"]

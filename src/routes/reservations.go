@@ -24,7 +24,7 @@ func getReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	reservation, exists := reservations[params["id"]]
 	if !exists {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "Reservation not found", http.StatusNotFound)
 		return
 	}
 	json.NewEncoder(w).Encode(reservation)
@@ -43,7 +43,7 @@ func updateReservation(w http.ResponseWriter, r *http.Request) {
 	var updatedReservation Reservation
 	json.NewDecoder(r.Body).Decode(&updatedReservation)
 	if _, exists := reservations[params["id"]]; !exists {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "Reservation not found", http.StatusNotFound)
 		return
 	}
 	updatedReservation.ID = params["id"]
@@ -54,7 +54,7 @@ func updateReservation(w http.ResponseWriter, r *http.Request) {
 func deleteReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if _, exists := reservations[params["id"]]; !exists {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "Reservation not found", http.StatusNotFound)
 		return
 	}
 	delete(reservations, params["id"])

@@ -1,0 +1,13 @@
+version: '1.0.0'
+services:
+  api:
+    image: rooms-api-image
+    container_name: roome-api-container
+    depends_on: []
+    environment:
+      DB_HOST: host.containers.internal
+      DB_USER: root
+      DB_PASSWORD: MarPsswd
+      DB_NAME: cis-rooms
+    ports:
+      - "6000:6000"
