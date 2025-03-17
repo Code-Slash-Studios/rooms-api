@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dsn := "root:MarPsswd@tcp(host.containers.internal:3306)/cis-rooms"
+	dsn := "code:dev</>@tcp(localhost:3306)/cis-rooms"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("Error opening database: ", err)
