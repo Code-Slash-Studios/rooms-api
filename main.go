@@ -16,7 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error opening database: ", err)
 	}
-	//defer db.Close()
+	defer db.Close()
 
 	// Test connection
 	err = db.Ping()
