@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	dsn := "code:dev</>@tcp(0.0.0.0:3306)/cis-rooms"
+	dsn := "code:dev</>@tcp(127.0.0.1:3306)/cis-rooms"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("Error opening database: ", err)
