@@ -12,7 +12,7 @@ COPY go.mod ./
 RUN go mod download
 
 # Copy source code
-COPY . ./
+COPY . /api
 
 # Build binary executable
 RUN go build -o /rooms-api .
