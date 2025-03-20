@@ -1,20 +1,21 @@
 # syntax=docker/dockerfile:1.4
 
 # Golang image as builder
-FROM golang:1.23 AS builder
+FROM golang:1.24-alpine 
+# AS builder
 
 # Set working directory
 WORKDIR /api
 
 # Copy Go module files and dependencies
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # Copy source code
-COPY . .
+COPY . ./
 
 # Build binary executable
-RUN go build -o rooms-api .
+RUN go build -o /rooms-api .
 
 # Use ubuntu image for container
 #FROM ubuntu:latest
@@ -30,4 +31,4 @@ EXPOSE 6000
 #EXPOSE 3306
 
 # Run application
-CMD ["./rooms-api"]
+CMD ["/rooms-api"]
