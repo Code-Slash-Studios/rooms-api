@@ -24,7 +24,7 @@ func main() {
 		log.Fatal("Error connecting to the database: ", err)
 	}
 
-	log.Println("Connected to MariaDB successfully!")
+	fmt.Println("Connected to MariaDB successfully!")
 
 	router := router.Router()
 	fmt.Println("Server is listening on port 6000")
