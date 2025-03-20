@@ -17,17 +17,17 @@ COPY . .
 RUN go build -o rooms-api .
 
 # Use ubuntu image for container
-FROM ubuntu:latest
+#FROM ubuntu:latest
 
 # Set working directory
-WORKDIR /root
+#WORKDIR /root
 
 # Copy executable
-COPY --from=builder /api/rooms-api .
+#COPY --from=builder /api/rooms-api .
 
 # Expose application port
 EXPOSE 6000
-EXPOSE 3306
+#EXPOSE 3306
 
 # Run application
 CMD ["./rooms-api"]
