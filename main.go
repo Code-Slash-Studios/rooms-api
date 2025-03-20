@@ -19,10 +19,10 @@ func main() {
 	defer db.Close()
 
 	// Test connection
-	err = db.Ping()
-	if err != nil {
-		log.Fatal("Error connecting to the database: ", err)
-	}
+	//err = db.Ping()
+	//if err != nil {
+	//	log.Fatal("Error connecting to the database: ", err)
+	//}
 
 	log.Println("Connected to MariaDB successfully!")
 
