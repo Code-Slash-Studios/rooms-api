@@ -12,4 +12,4 @@ podman:
 	podman stop ${NAME}-container
 	podman rm ${NAME}-container
 	podman build -t ${NAME}-image .
-	podman run -d -p 6000:6000 -e DB_HOST=host.containers.internal --name ${NAME}-container ${NAME}-image
+	podman run -d -p 6000:6000 --name ${NAME}-container ${NAME}-image
