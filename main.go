@@ -2,21 +2,34 @@ package main
 
 import (
 	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
+
 	_ "fmt"
 	"log"
 	"net/http"
-	_ "rooms-api/src/database"
 	"rooms-api/src/router"
-
-	_ "github.com/go-sql-driver/mysql"
+	"rooms-api/src/routes"
 )
-
-var db *sql.DB
 
 func main() {
 	// Init DataBase Connection
-	//db = database.dbConnect()
-	//defer db.Close()
+	dsn := "code:dev</>@tcp(10.25.1.253:3306)/cis-rooms"
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal("Error opening database: ", err)
+	}
+	defer db.Close()
+
+	// Test connection
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("Error connecting to the database: ", err)
+	}
+
+	log.Println("Connected to MariaDB successfully!")
+
+	routes.DB = db
 
 	router := router.Router()
 	log.Println("Server is listening on port 6000")
