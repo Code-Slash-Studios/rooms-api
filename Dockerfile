@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 
 # Golang image as builder
-FROM golang:1.24-alpine 
+FROM golang:1.23-alpine 
 # AS builder
 
 # Set working directory

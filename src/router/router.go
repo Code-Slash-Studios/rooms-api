@@ -7,7 +7,7 @@ import (
 )
 
 func Router() *mux.Router {
-	api := mux.NewRouter()
+	api := mux.NewRouter().StrictSlash(true)
 	//api.HandleFunc("/reservations", getReservations).Methods("GET")
 	//api.HandleFunc("/reservations/{id}", getReservation).Methods("GET")
 	//api.HandleFunc("/reservations", createReservation).Methods("POST")
