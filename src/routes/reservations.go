@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	. "rooms-api/src/models"
@@ -11,16 +12,22 @@ import (
 
 var reservations = make(map[string]Reservation)
 
-func getReservations(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var ReservationList []Reservation
-	for _, reservation := range reservations {
-		ReservationList = append(ReservationList, reservation)
+func GetReservations(w http.ResponseWriter, r *http.Request) {
+	query, err := DB.Query("select * from reservations")
+	if err != nil {
+		log.Println("Unable to retrieve data")
 	}
-	json.NewEncoder(w).Encode(ReservationList)
+
+	json.NewEncoder(w).Encode(query)
+	//w.Header().Set("Content-Type", "application/json")
+	//var ReservationList []Reservation
+	//for _, reservation := range reservations {
+	//	ReservationList = append(ReservationList, reservation)
+	//}
+	//json.NewEncoder(w).Encode(ReservationList)
 }
 
-func getReservation(w http.ResponseWriter, r *http.Request) {
+func GetReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	reservation, exists := reservations[params["id"]]
 	if !exists {
@@ -30,7 +37,7 @@ func getReservation(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(reservation)
 }
 
-func createReservation(w http.ResponseWriter, r *http.Request) {
+func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	var reservation Reservation
 	json.NewDecoder(r.Body).Decode(&reservation)
 	reservations[reservation.ID] = reservation
@@ -38,7 +45,7 @@ func createReservation(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(reservation)
 }
 
-func updateReservation(w http.ResponseWriter, r *http.Request) {
+func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var updatedReservation Reservation
 	json.NewDecoder(r.Body).Decode(&updatedReservation)
@@ -51,7 +58,7 @@ func updateReservation(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updatedReservation)
 }
 
-func deleteReservation(w http.ResponseWriter, r *http.Request) {
+func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if _, exists := reservations[params["id"]]; !exists {
 		http.Error(w, "Reservation not found", http.StatusNotFound)

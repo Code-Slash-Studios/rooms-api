@@ -11,7 +11,7 @@ import (
 
 var rooms = make(map[string]Room)
 
-func getRooms(w http.ResponseWriter, r *http.Request) {
+func GetRooms(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var RoomList []Room
 	for _, room := range rooms {
@@ -20,7 +20,7 @@ func getRooms(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(RoomList)
 }
 
-func getRoom(w http.ResponseWriter, r *http.Request) {
+func GetRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	room, exists := rooms[params["id"]]
 	if !exists {
@@ -30,7 +30,7 @@ func getRoom(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(room)
 }
 
-func createRoom(w http.ResponseWriter, r *http.Request) {
+func CreateRoom(w http.ResponseWriter, r *http.Request) {
 	var room Room
 	json.NewDecoder(r.Body).Decode(&room)
 	rooms[room.ID] = room
@@ -38,7 +38,7 @@ func createRoom(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(room)
 }
 
-func updateRoom(w http.ResponseWriter, r *http.Request) {
+func UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var updatedRoom Room
 	json.NewDecoder(r.Body).Decode(&updatedRoom)
@@ -51,7 +51,7 @@ func updateRoom(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updatedRoom)
 }
 
-func deleteRoom(w http.ResponseWriter, r *http.Request) {
+func DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if _, exists := rooms[params["id"]]; !exists {
 		http.Error(w, "Room not found", http.StatusNotFound)
