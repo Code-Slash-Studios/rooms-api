@@ -6,11 +6,12 @@ import (
 )
 
 type Reservation struct {
-	ID    string    `json:"id"`
-	Name  string    `json:"name"`
-	Room  string    `json:"room"`
-	Start time.Time `json:"start"`
-	End   time.Time `json:"end"`
+	ID     string    `json:"id"`
+	RoomID string    `json:"room_id"`
+	Name   string    `json:"name"`
+	UserID string    `json:"user_id"`
+	Start  time.Time `json:"start"`
+	End    time.Time `json:"end"`
 }
 
 type Room struct {

@@ -1,69 +1,144 @@
 package routes
 
 import (
+	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
+	"strconv"
 
 	. "rooms-api/src/models"
 
 	"github.com/gorilla/mux"
 )
 
-var reservations = make(map[string]Reservation)
-
 func GetReservations(w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Query("select * from reservations")
+	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations")
 	if err != nil {
-		log.Println("Unable to retrieve data")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	defer rows.Close()
 
-	json.NewEncoder(w).Encode(query)
-	//w.Header().Set("Content-Type", "application/json")
-	//var ReservationList []Reservation
-	//for _, reservation := range reservations {
-	//	ReservationList = append(ReservationList, reservation)
-	//}
-	//json.NewEncoder(w).Encode(ReservationList)
+	reservations := []Reservation{}
+	for rows.Next() {
+		var res Reservation
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		reservations = append(reservations, res)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(reservations)
 }
 
 func GetReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	reservation, exists := reservations[params["id"]]
-	if !exists {
+	id := params["id"]
+	var res Reservation
+	query := "SELECT id, room_id, name, user_id, start, end FROM reservations WHERE id = ?"
+	err := DB.QueryRow(query, id).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
+	if err == sql.ErrNoRows {
 		http.Error(w, "Reservation not found", http.StatusNotFound)
 		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	json.NewEncoder(w).Encode(reservation)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}
+
+func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	roomID := params["room_id"]
+	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations WHERE room_id = ?", roomID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	reservations := []Reservation{}
+	for rows.Next() {
+		var res Reservation
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		reservations = append(reservations, res)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(reservations)
+}
+
+func GetReservationsByUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID := params["user_id"]
+	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations WHERE user_id = ?", userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	reservations := []Reservation{}
+	for rows.Next() {
+		var res Reservation
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		reservations = append(reservations, res)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(reservations)
 }
 
 func CreateReservation(w http.ResponseWriter, r *http.Request) {
-	var reservation Reservation
-	json.NewDecoder(r.Body).Decode(&reservation)
-	reservations[reservation.ID] = reservation
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(reservation)
+	var res Reservation
+	if err := json.NewDecoder(r.Body).Decode(&res); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	query := `INSERT INTO reservations (room_id, name, user_id, start, end) VALUES (?, ?, ?, ?, ?)`
+	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	id, _ := result.LastInsertId()
+	res.ID = strconv.FormatInt(id, 10)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
 }
 
 func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var updatedReservation Reservation
-	json.NewDecoder(r.Body).Decode(&updatedReservation)
-	if _, exists := reservations[params["id"]]; !exists {
-		http.Error(w, "Reservation not found", http.StatusNotFound)
+	id := params["id"]
+	var res Reservation
+	if err := json.NewDecoder(r.Body).Decode(&res); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	updatedReservation.ID = params["id"]
-	reservations[params["id"]] = updatedReservation
-	json.NewEncoder(w).Encode(updatedReservation)
+	query := `UPDATE reservations SET room_id = ?, name = ?, user_id = ?, start = ?, end = ? WHERE id = ?`
+	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res.ID = res.ID
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
 }
 
 func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	if _, exists := reservations[params["id"]]; !exists {
-		http.Error(w, "Reservation not found", http.StatusNotFound)
+	id := params["id"]
+	_, err := DB.Exec("DELETE FROM reservations WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	delete(reservations, params["id"])
 	w.WriteHeader(http.StatusNoContent)
 }

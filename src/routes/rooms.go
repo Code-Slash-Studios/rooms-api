@@ -1,62 +1,95 @@
 package routes
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	. "rooms-api/src/models"
 
 	"github.com/gorilla/mux"
 )
 
-var rooms = make(map[string]Room)
-
 func GetRooms(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var RoomList []Room
-	for _, room := range rooms {
-		RoomList = append(RoomList, room)
+	rows, err := DB.Query("SELECT id, name, department FROM rooms")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	json.NewEncoder(w).Encode(RoomList)
+	defer rows.Close()
+
+	rooms := []Room{}
+	for rows.Next() {
+		var room Room
+		if err := rows.Scan(&room.ID, &room.Name, &room.Department); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rooms = append(rooms, room)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(rooms)
 }
 
 func GetRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	room, exists := rooms[params["id"]]
-	if !exists {
+	id := params["id"]
+	var room Room
+	err := DB.QueryRow("SELECT id, name, department FROM rooms WHERE id = ?", id).Scan(&room.ID, &room.Name, &room.Department)
+	if err == sql.ErrNoRows {
 		http.Error(w, "Room not found", http.StatusNotFound)
 		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(room)
 }
 
 func CreateRoom(w http.ResponseWriter, r *http.Request) {
 	var room Room
-	json.NewDecoder(r.Body).Decode(&room)
-	rooms[room.ID] = room
-	w.WriteHeader(http.StatusCreated)
+	if err := json.NewDecoder(r.Body).Decode(&room); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	result, err := DB.Exec("INSERT INTO rooms (name, department) VALUES (?, ?)", room.Name, room.Department)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	id, _ := result.LastInsertId()
+	room.ID = strconv.FormatInt(id, 10)
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(room)
 }
 
 func UpdateRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var updatedRoom Room
-	json.NewDecoder(r.Body).Decode(&updatedRoom)
-	if _, exists := rooms[params["id"]]; !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+	id := params["id"]
+	var room Room
+	if err := json.NewDecoder(r.Body).Decode(&room); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	updatedRoom.ID = params["id"]
-	rooms[params["id"]] = updatedRoom
-	json.NewEncoder(w).Encode(updatedRoom)
+	_, err := DB.Exec("UPDATE rooms SET name = ?, department = ? WHERE id = ?", room.Name, room.Department, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	room.ID = room.ID
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(room)
 }
 
 func DeleteRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	if _, exists := rooms[params["id"]]; !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+	id := params["id"]
+	_, err := DB.Exec("DELETE FROM rooms WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	delete(rooms, params["id"])
 	w.WriteHeader(http.StatusNoContent)
 }

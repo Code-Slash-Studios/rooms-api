@@ -16,6 +16,8 @@ func Router() *mux.Router {
 	api.HandleFunc("/reservations", routes.CreateReservation).Methods("POST")
 	api.HandleFunc("/reservations/{id}", routes.UpdateReservation).Methods("PUT")
 	api.HandleFunc("/reservations/{id}", routes.DeleteReservation).Methods("DELETE")
+	api.HandleFunc("/reservations/room/{room_id}", routes.GetReservationsByRoom).Methods("GET")
+	api.HandleFunc("/reservations/user/{user_id}", routes.GetReservationsByUser).Methods("GET")
 
 	api.HandleFunc("/rooms", routes.GetRooms).Methods("GET")
 	api.HandleFunc("/rooms/{id}", routes.GetRoom).Methods("GET")
@@ -24,7 +26,7 @@ func Router() *mux.Router {
 	api.HandleFunc("/rooms/{id}", routes.DeleteRoom).Methods("DELETE")
 
 	pi.HandleFunc("/", routes.GetReservations).Methods("GET")
-	pi.HandleFunc("/{room}", routes.GetReservation).Methods("GET")
+	pi.HandleFunc("/{room}", routes.GetReservationsByRoom).Methods("GET")
 
 	return r
 }
