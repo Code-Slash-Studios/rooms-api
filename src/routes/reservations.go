@@ -11,7 +11,7 @@ import (
 )
 
 func GetReservations(w http.ResponseWriter, r *http.Request) {
-	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations")
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -35,7 +35,7 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 	var res Reservation
-	query := "SELECT id, room_id, name, user_id, start, end FROM reservations WHERE id = ?"
+	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE ID = ?"
 	err := DB.QueryRow(query, id).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Reservation not found", http.StatusNotFound)
@@ -51,7 +51,7 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	roomID := params["room_id"]
-	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations WHERE room_id = ?", roomID)
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ?", roomID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,7 +74,7 @@ func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 func GetReservationsByUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID := params["user_id"]
-	rows, err := DB.Query("SELECT id, room_id, name, user_id, start, end FROM reservations WHERE user_id = ?", userID)
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE UserID = ?", userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -100,7 +100,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	query := `INSERT INTO reservations (room_id, name, user_id, start, end) VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO reservations (RoomID, Name, UserID, Start, End) VALUES (?, ?, ?, ?, ?)`
 	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -120,7 +120,7 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	query := `UPDATE reservations SET room_id = ?, name = ?, user_id = ?, start = ?, end = ? WHERE id = ?`
+	query := `UPDATE reservations SET RoomID = ?, Name = ?, UserID = ?, Start = ?, End = ? WHERE ID = ?`
 	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -134,7 +134,7 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
-	_, err := DB.Exec("DELETE FROM reservations WHERE id = ?", id)
+	_, err := DB.Exec("DELETE FROM reservations WHERE ID = ?", id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
