@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	. "rooms-api/src/models"
 
@@ -21,10 +22,13 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 	reservations := []Reservation{}
 	for rows.Next() {
 		var res Reservation
-		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+		var start, end string
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &start, &end); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
+		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -35,8 +39,9 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 	var res Reservation
+	var start, end string
 	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE ID = ?"
-	err := DB.QueryRow(query, id).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
+	err := DB.QueryRow(query, id).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &start, &end)
 	if err == sql.ErrNoRows {
 		http.Error(w, "Reservation not found", http.StatusNotFound)
 		return
@@ -44,6 +49,9 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
+	res.End, _ = time.Parse("0000-00-00 00:00:00", end)
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
@@ -61,10 +69,13 @@ func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 	reservations := []Reservation{}
 	for rows.Next() {
 		var res Reservation
-		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+		var start, end string
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &start, &end); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
+		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -84,10 +95,13 @@ func GetReservationsByUser(w http.ResponseWriter, r *http.Request) {
 	reservations := []Reservation{}
 	for rows.Next() {
 		var res Reservation
-		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+		var start, end string
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &start, &end); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
+		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -101,7 +115,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query := `INSERT INTO reservations (RoomID, Name, UserID, Start, End) VALUES (?, ?, ?, ?, ?)`
-	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End)
+	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("0000-00-00 00:00:00"), res.End.Format("0000-00-00 00:00:00"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -121,7 +135,7 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query := `UPDATE reservations SET RoomID = ?, Name = ?, UserID = ?, Start = ?, End = ? WHERE ID = ?`
-	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End, id)
+	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("0000-00-00 00:00:00"), res.End.Format("0000-00-00 00:00:00"), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
