@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// Init DataBase Connection
-	dsn := "code:dev</>@tcp(10.25.1.253:3306)/cis-rooms"
+	dsn := "code:dev</>@tcp(10.25.1.253:3306)/cis-rooms?parseTime=true"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("Error opening database: ", err)

@@ -27,8 +27,8 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
-		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
+		res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
+		res.End, _ = time.Parse("2025-04-01 13:10:30", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -49,8 +49,8 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
-	res.End, _ = time.Parse("0000-00-00 00:00:00", end)
+	res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
+	res.End, _ = time.Parse("2025-04-01 13:10:30", end)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
@@ -74,8 +74,8 @@ func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
-		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
+		res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
+		res.End, _ = time.Parse("2025-04-01 13:10:30", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -100,8 +100,8 @@ func GetReservationsByUser(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		res.Start, _ = time.Parse("0000-00-00 00:00:00", start)
-		res.End, _ = time.Parse("0000-00-00 00:00:00", end)
+		res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
+		res.End, _ = time.Parse("2025-04-01 13:10:30", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -115,7 +115,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query := `INSERT INTO reservations (RoomID, Name, UserID, Start, End) VALUES (?, ?, ?, ?, ?)`
-	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("0000-00-00 00:00:00"), res.End.Format("0000-00-00 00:00:00"))
+	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("2025-04-01 13:10:30"), res.End.Format("2025-04-01 13:10:30"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -135,7 +135,7 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	query := `UPDATE reservations SET RoomID = ?, Name = ?, UserID = ?, Start = ?, End = ? WHERE ID = ?`
-	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("0000-00-00 00:00:00"), res.End.Format("0000-00-00 00:00:00"), id)
+	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start.Format("2025-04-01 13:10:30"), res.End.Format("2025-04-01 13:10:30"), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
