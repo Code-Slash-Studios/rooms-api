@@ -22,13 +22,13 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 	reservations := []Reservation{}
 	for rows.Next() {
 		var res Reservation
-		var start, end string
-		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &start, &end); err != nil {
+		//var start, end string
+		if err := rows.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
-		res.End, _ = time.Parse("2025-04-01 13:10:30", end)
+		//res.Start, _ = time.Parse("2025-04-01 13:10:30", start)
+		//res.End, _ = time.Parse("2025-04-01 13:10:30", end)
 		reservations = append(reservations, res)
 	}
 	w.Header().Set("Content-Type", "application/json")
