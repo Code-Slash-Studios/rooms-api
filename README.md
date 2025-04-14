@@ -9,3 +9,5 @@ Under src, authentication is used for the authentication import, controllers is 
 ***NOTE***
 
 Within main.go, there is a database connection that needs to be updated to your environment, including the IP address for the database and user/password information.
+
+We also recommend setting up your environment similar to our environment for easy use. That means allowing routing from port 6000 to 80/api and allowing routing to port 80/pi. See the API code for more details.
