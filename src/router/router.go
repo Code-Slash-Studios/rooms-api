@@ -26,7 +26,7 @@ func Router() *mux.Router {
 	api.HandleFunc("/rooms/{id}", routes.DeleteRoom).Methods("DELETE")
 
 	pi.HandleFunc("/", routes.GetReservations).Methods("GET")
-	pi.HandleFunc("/{room}", routes.GetReservationsByRoom).Methods("GET")
+	pi.HandleFunc("/{room_id}", routes.GetReservationsByRoom).Methods("GET")
 
 	return r
 }
