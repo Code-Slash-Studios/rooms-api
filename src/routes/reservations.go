@@ -11,7 +11,7 @@ import (
 )
 
 func GetReservations(w http.ResponseWriter, r *http.Request) {
-	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations")
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations order by Start ASC")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -52,7 +52,7 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	roomID := params["room_id"]
-	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ?", roomID)
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? order by Start ASC", roomID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,7 +75,7 @@ func GetReservationsByRoom(w http.ResponseWriter, r *http.Request) {
 func GetReservationsByUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID := params["user_id"]
-	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE UserID = ?", userID)
+	rows, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE UserID = ? order by Start ASC", userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
