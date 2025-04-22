@@ -1,7 +1,6 @@
 package models
 
 import (
-	"container/list"
 	"time"
 )
 
@@ -21,8 +20,8 @@ type Room struct {
 }
 
 type User struct {
-	ID         string    `json:"id"`
-	FName      string    `json:"fname"`
-	LName      string    `json:"lname"`
-	Department list.List `json:"department"`
+	ID    string `json:"id"`
+	FName string `json:"fname"`
+	LName string `json:"lname"`
+	Admin string `json:"admin"`
 }
