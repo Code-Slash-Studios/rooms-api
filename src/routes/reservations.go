@@ -174,7 +174,7 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 			var res Reservation
 			if err := resRow.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				//return
 			}
 			reservations = append(reservations, res)
 		}
