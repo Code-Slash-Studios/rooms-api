@@ -165,10 +165,10 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 	for _, room := range rooms {
 		var res Reservation
 		err := DB.QueryRow(query, room.ID).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
-		if err == sql.ErrNoRows {
-			http.Error(w, "Reservation not found", http.StatusNotFound)
-			return
-		} else if err != nil {
+		//if err == sql.ErrNoRows {
+		//http.Error(w, "Reservation not found", http.StatusNotFound)
+		//return
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
