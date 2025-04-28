@@ -142,3 +142,44 @@ func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func GetNextReservations(w http.ResponseWriter, r *http.Request) {
+	roomRows, err := DB.Query("SELECT id, name, department FROM rooms")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer roomRows.Close()
+
+	rooms := []Room{}
+	for roomRows.Next() {
+		var room Room
+		if err := roomRows.Scan(&room.ID, &room.Name, &room.Department); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rooms = append(rooms, room)
+	}
+
+	reservations := []Reservation{}
+	for _, room := range rooms {
+		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? order by Start ASC fetch first 1 rows only", room.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer resRow.Close()
+
+		for resRow.Next() {
+			var res Reservation
+			if err := resRow.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			reservations = append(reservations, res)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(reservations)
+}
