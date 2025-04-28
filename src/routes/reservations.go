@@ -163,7 +163,7 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 
 	reservations := []Reservation{}
 	for _, room := range rooms {
-		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > CURRENT_TIMESTAMP order by Start ASC fetch first 1 rows only", room.ID)
+		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1", room.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
