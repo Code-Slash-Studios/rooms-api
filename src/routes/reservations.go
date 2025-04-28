@@ -169,8 +169,8 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 		//http.Error(w, "Reservation not found", http.StatusNotFound)
 		//return
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			//	http.Error(w, err.Error(), http.StatusInternalServerError)
+			//	return
 		}
 		reservations = append(reservations, res)
 	}
