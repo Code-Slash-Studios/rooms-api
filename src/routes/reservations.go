@@ -163,18 +163,18 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 
 	reservations := []Reservation{}
 	for _, room := range rooms {
-		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? WHERE Start > CURRENT_TIMESTAMP order by Start ASC fetch first 1 rows only", room.ID)
+		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > CURRENT_TIMESTAMP order by Start ASC fetch first 1 rows only", room.ID)
 		if err != nil {
-			//http.Error(w, err.Error(), http.StatusInternalServerError)
-			//return
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 		defer resRow.Close()
 
 		for resRow.Next() {
 			var res Reservation
 			if err := resRow.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End); err != nil {
-				//http.Error(w, err.Error(), http.StatusInternalServerError)
-				//return
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
 			reservations = append(reservations, res)
 		}
