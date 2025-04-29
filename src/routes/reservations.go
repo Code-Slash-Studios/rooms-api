@@ -38,7 +38,7 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE ID = ?"
 	err := DB.QueryRow(query, id).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
 	if err == sql.ErrNoRows {
-		http.Error(w, "Reservation not found", http.StatusNotFound)
+		http.Error(w, "Reservation `id` not found", http.StatusNotFound)
 		return
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
