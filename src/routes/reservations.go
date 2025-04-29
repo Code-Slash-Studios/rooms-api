@@ -143,7 +143,7 @@ func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func GetNextReservations(w http.ResponseWriter, r *http.Request) {
+func GetNext(w http.ResponseWriter, r *http.Request) {
 	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1"
 	roomRows, err := DB.Query("SELECT id, name, department FROM rooms")
 	if err != nil {
