@@ -144,7 +144,7 @@ func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetNextReservations(w http.ResponseWriter, r *http.Request) {
-	//query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1"
+	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1"
 	roomRows, err := DB.Query("SELECT id, name, department FROM rooms")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -162,18 +162,18 @@ func GetNextReservations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reservations := []Reservation{}
-	//for _, room := range rooms {
-	//	var res Reservation
-	//	err := DB.QueryRow(query, room.ID).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
-	//	//if err == sql.ErrNoRows {
-	//	//http.Error(w, "Reservation not found", http.StatusNotFound)
-	//	//return
-	//	if err != nil {
-	//		//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//		//	return
-	//	}
-	//	reservations = append(reservations, res)
-	//}
+	for _, room := range rooms {
+		var res Reservation
+		err := DB.QueryRow(query, room.ID).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
+		if err == sql.ErrNoRows {
+			http.Error(w, "Reservation not found", http.StatusNotFound)
+			return
+		} else if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		reservations = append(reservations, res)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(reservations)
