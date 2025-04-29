@@ -144,7 +144,6 @@ func DeleteReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetNext(w http.ResponseWriter, r *http.Request) {
-	query := "SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1"
 	roomRows, err := DB.Query("SELECT id, name, department FROM rooms")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -164,14 +163,12 @@ func GetNext(w http.ResponseWriter, r *http.Request) {
 	reservations := []Reservation{}
 	for _, room := range rooms {
 		var res Reservation
-		err := DB.QueryRow(query, room.ID).Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
-		if err == sql.ErrNoRows {
-			http.Error(w, "Reservation not found", http.StatusNotFound)
-			return
-		} else if err != nil {
+		resRow, err := DB.Query("SELECT ID, RoomID, Name, UserID, Start, End FROM reservations WHERE RoomID = ? AND Start > current_timestamp order by Start ASC limit 1", room.ID)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		resRow.Scan(&res.ID, &res.RoomID, &res.Name, &res.UserID, &res.Start, &res.End)
 		reservations = append(reservations, res)
 	}
 
