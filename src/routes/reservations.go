@@ -3,6 +3,7 @@ package routes
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	. "rooms-api/src/models"
@@ -101,6 +102,21 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	var conflictCount int
+	checkQuery := `SELECT COUNT(*) FROM appointments WHERE room_id = ? AND start_time < ? AND end_time > ?`
+	checkErr := DB.QueryRow(checkQuery, res.RoomID, res.End, res.Start).Scan(&conflictCount)
+	if checkErr != nil {
+		http.Error(w, checkErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	if conflictCount > 0 {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusConflict)
+		fmt.Fprint(w, "Conflict detected: room is already booked")
+		return
+	}
+
 	query := `INSERT INTO reservations (RoomID, Name, UserID, Start, End) VALUES (?, ?, ?, ?, ?)`
 	result, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End)
 	if err != nil {
@@ -121,6 +137,21 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	var conflictCount int
+	checkQuery := `SELECT COUNT(*) FROM appointments WHERE room_id = ? AND start_time < ? AND end_time > ?`
+	checkErr := DB.QueryRow(checkQuery, res.RoomID, res.End, res.Start).Scan(&conflictCount)
+	if checkErr != nil {
+		http.Error(w, checkErr.Error(), http.StatusInternalServerError)
+		return
+	}
+	if conflictCount > 0 {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusConflict)
+		fmt.Fprint(w, "Conflict detected: room is already booked")
+		return
+	}
+
 	query := `UPDATE reservations SET RoomID = ?, Name = ?, UserID = ?, Start = ?, End = ? WHERE ID = ?`
 	_, err := DB.Exec(query, res.RoomID, res.Name, res.UserID, res.Start, res.End, id)
 	if err != nil {
