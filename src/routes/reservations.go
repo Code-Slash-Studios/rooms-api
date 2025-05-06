@@ -104,7 +104,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var conflictCount int
-	checkQuery := `SELECT COUNT(*) FROM appointments WHERE room_id = ? AND start_time < ? AND end_time > ?`
+	checkQuery := `SELECT COUNT(*) FROM reservations WHERE room_id = ? AND Start < ? AND End > ?`
 	checkErr := DB.QueryRow(checkQuery, res.RoomID, res.End, res.Start).Scan(&conflictCount)
 	if checkErr != nil {
 		http.Error(w, checkErr.Error(), http.StatusInternalServerError)
@@ -139,7 +139,7 @@ func UpdateReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var conflictCount int
-	checkQuery := `SELECT COUNT(*) FROM appointments WHERE room_id = ? AND start_time < ? AND end_time > ?`
+	checkQuery := `SELECT COUNT(*) FROM reservations WHERE room_id = ? AND Start < ? AND End > ?`
 	checkErr := DB.QueryRow(checkQuery, res.RoomID, res.End, res.Start).Scan(&conflictCount)
 	if checkErr != nil {
 		http.Error(w, checkErr.Error(), http.StatusInternalServerError)
