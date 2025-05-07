@@ -54,14 +54,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	result, err := DB.Exec("INSERT INTO users (fname, lname) VALUES (?, ?)", user.FName, user.LName)
+	result, err := DB.Exec("INSERT INTO users (id, fname, lname) VALUES (?, ?)", user.ID, user.FName, user.LName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	id, _ := result.LastInsertId()
-	user.ID = strconv.FormatInt(id, 10)
-	user.Admin = "false"
+	user.Admin = false
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }
