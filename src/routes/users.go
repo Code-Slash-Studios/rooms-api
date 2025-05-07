@@ -53,7 +53,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	_, err := DB.Exec("INSERT INTO users (id, fname, lname, admin) VALUES (?, ?, ?, ?)", user.ID, user.FName, user.LName, "false")
+	_, err := DB.Exec("INSERT INTO users (id, fname, lname, admin) VALUES (?, ?, ?, ?)", user.ID, user.FName, user.LName, 0)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
