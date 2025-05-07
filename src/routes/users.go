@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	. "rooms-api/src/models"
 
@@ -54,7 +53,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	result, err := DB.Exec("INSERT INTO users (id, fname, lname) VALUES (?, ?)", user.ID, user.FName, user.LName)
+	_, err := DB.Exec("INSERT INTO users (id, fname, lname) VALUES (?, ?)", user.ID, user.FName, user.LName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
