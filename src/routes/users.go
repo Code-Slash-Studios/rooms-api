@@ -35,7 +35,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 	var user User
-	err := DB.QueryRow("SELECT id, fname, lname, admin FROM users WHERE id = ?", id).Scan(&user.ID, &user.FName, user.LName, &user.Admin)
+	err := DB.QueryRow("SELECT id, fname, lname, admin FROM users WHERE id = ?", id).Scan(&user.ID, &user.FName, &user.LName, &user.Admin)
 	if err == sql.ErrNoRows {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
