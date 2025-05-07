@@ -23,5 +23,5 @@ type User struct {
 	ID    string `json:"id"`
 	FName string `json:"fname"`
 	LName string `json:"lname"`
-	Admin string `json:"admin"`
+	Admin bool `json:"admin"`
 }
